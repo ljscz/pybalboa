@@ -274,8 +274,16 @@ class BalboaSpaWifi:
                 or self.pump_status[pump] == newstate):
             return
 
+        # calculate how many times to push the button
+        if self.pump_array[pump] == 2:
+            for iter in range(1, 2+1):
+                if newstate == ((self.pump_status[pump] + iter) % 3):
+                    break
+        else:
+            iter = 1
+          
         # toggle until we hit the desired state
-        for i in range(0, (newstate-self.pump_status[pump]) % (self.pump_array[pump]+1)):
+        for i in range(0, iter):
             await self.send_message(*mtypes[BMTS_CONTROL_REQ], C_PUMP1 + pump, 0x00)
             await asyncio.sleep(1.0)
 
